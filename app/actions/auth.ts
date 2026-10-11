@@ -49,6 +49,13 @@ export async function signupAction(formData: FormData) {
   // Use admin client to verify and claim invite code reliably
   const adminSupabase = createAdminClient();
 
+  // === DEBUG LOGS ===
+  console.log("=== SIGNUP DEBUG ===");
+  console.log("URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+  console.log("Service key present:", !!process.env.SUPABASE_SERVICE_ROLE_KEY);
+  console.log("Searching code:", inviteCode.trim().toUpperCase());
+  // ===================
+
   // 1. Verify invitation code
   const { data: invite, error: inviteErr } = await adminSupabase
     .from("invitations")
@@ -56,10 +63,15 @@ export async function signupAction(formData: FormData) {
     .eq("code", inviteCode.trim().toUpperCase())
     .maybeSingle();
 
+  // === DEBUG LOGS 2 ===
+  console.log("Invite data:", invite);
+  console.log("Invite error:", inviteErr);
+  // ====================
+
   if (inviteErr || !invite) {
     return { error: "Invalid invitation code. Please request one from an executive." };
   }
-
+  
   if (invite.used_by) {
     return { error: "This invitation code has already been redeemed." };
   }

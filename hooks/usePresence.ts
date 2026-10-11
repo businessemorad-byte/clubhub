@@ -20,7 +20,9 @@ export function usePresence(roomName: string = "clubhub-global") {
   useEffect(() => {
     if (!user || !profile) return;
 
-    const channel = supabase.channel(`presence-${roomName}`, {
+    // Use unique channel name per mount to avoid conflicts
+    const uniqueRoom = `${roomName}-${Math.random().toString(36).slice(2, 9)}`;
+    const channel = supabase.channel(`presence-${uniqueRoom}`, {
       config: {
         presence: {
           key: user.id,

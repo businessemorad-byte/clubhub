@@ -17,19 +17,19 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
 
   if (!user) redirect("/login");
 
-  const channelName = decodeURIComponent(params.channelName);
+    const channelName = decodeURIComponent(params.channelName);
 
-  // Fetch channel by name (or id fallback)
+  // Fetch channel by name only (id is UUID, can't be queried as text)
   const { data: channel, error: channelErr } = await supabase
     .from("channels")
     .select("*")
-    .or(`name.eq.${channelName},id.eq.${channelName}`)
+    .eq("name", channelName)
     .maybeSingle();
 
   if (channelErr || !channel) {
     notFound();
   }
-
+  
   // Check if executive room
   if (channel.type === "executive") {
     const { data: profile } = await supabase
