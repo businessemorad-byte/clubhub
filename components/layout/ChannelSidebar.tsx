@@ -12,7 +12,7 @@ import {
   MessageSquarePlus,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { Channel, Profile } from "@/types";
+import { Channel, Profile, isPresidency } from "@/types";
 import { createClient } from "@/lib/supabase/client";
 import { UserStatusFooter } from "./UserStatusFooter";
 import { getInitials, getRoleBadgeClass } from "@/lib/utils";
@@ -21,6 +21,7 @@ import { usePresence } from "@/hooks/usePresence";
 export function ChannelSidebar() {
   const pathname = usePathname();
   const { user, profile, isExecutive } = useAuth();
+  const isPresidentOrVP = isPresidency(profile?.role);
   const [channels, setChannels] = useState<Channel[]>([]);
   const [members, setMembers] = useState<Profile[]>([]);
   const { isUserOnline } = usePresence("clubhub-global");
@@ -118,8 +119,8 @@ export function ChannelSidebar() {
           </div>
         </div>
 
-        {/* Executive Channels */}
-        {isExecutive && executiveChannels.length > 0 && (
+        {/* Executive Channels (President & Vice-President) */}
+        {isPresidentOrVP && executiveChannels.length > 0 && (
           <div>
             <div className="px-2 text-[11px] font-bold text-[#949ba4] uppercase tracking-wider mb-1 flex items-center justify-between">
               <span>Executive Only</span>

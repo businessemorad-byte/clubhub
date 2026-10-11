@@ -1,6 +1,6 @@
 "use client";
 
-import { Hash, Megaphone, Lock, Users } from "lucide-react";
+import { Hash, Megaphone, Lock, Users, Pin, BarChart2 } from "lucide-react";
 import { ChannelType } from "@/types";
 
 interface ChatHeaderProps {
@@ -8,6 +8,9 @@ interface ChatHeaderProps {
   type?: ChannelType;
   description?: string | null;
   onlineCount?: number;
+  pinnedCount?: number;
+  onOpenPinned?: () => void;
+  onOpenCreatePoll?: () => void;
 }
 
 export function ChatHeader({
@@ -15,6 +18,9 @@ export function ChatHeader({
   type = "public",
   description,
   onlineCount,
+  pinnedCount = 0,
+  onOpenPinned,
+  onOpenCreatePoll,
 }: ChatHeaderProps) {
   const renderIcon = () => {
     switch (type) {
@@ -45,13 +51,41 @@ export function ChatHeader({
         )}
       </div>
 
-      {onlineCount !== undefined && (
-        <div className="flex items-center gap-1.5 text-xs text-[#949ba4] bg-[#2b2d31] px-2.5 py-1 rounded-full border border-[#3f4147]">
-          <div className="w-2 h-2 rounded-full bg-[#23a55a] animate-pulse" />
-          <Users className="w-3.5 h-3.5" />
-          <span>{onlineCount} online</span>
-        </div>
-      )}
+      <div className="flex items-center gap-2">
+        {onOpenCreatePoll && (
+          <button
+            onClick={onOpenCreatePoll}
+            className="p-1.5 text-[#949ba4] hover:text-white hover:bg-[#35373c] rounded transition-colors flex items-center gap-1 text-xs"
+            title="Create Poll"
+          >
+            <BarChart2 className="w-4 h-4 text-[#5865f2]" />
+            <span className="hidden md:inline">Poll</span>
+          </button>
+        )}
+
+        {onOpenPinned && (
+          <button
+            onClick={onOpenPinned}
+            className="p-1.5 text-[#949ba4] hover:text-[#f0b232] hover:bg-[#35373c] rounded transition-colors flex items-center gap-1 text-xs relative"
+            title="View Pinned Messages"
+          >
+            <Pin className="w-4 h-4" />
+            {pinnedCount > 0 && (
+              <span className="bg-[#f0b232] text-black font-bold text-[9px] px-1 rounded-full">
+                {pinnedCount}
+              </span>
+            )}
+          </button>
+        )}
+
+        {onlineCount !== undefined && (
+          <div className="flex items-center gap-1.5 text-xs text-[#949ba4] bg-[#2b2d31] px-2.5 py-1 rounded-full border border-[#3f4147]">
+            <div className="w-2 h-2 rounded-full bg-[#23a55a] animate-pulse" />
+            <Users className="w-3.5 h-3.5" />
+            <span>{onlineCount} online</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

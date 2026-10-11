@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { ChannelChat } from "@/components/chat/ChannelChat";
-import { Channel, Message, isExecutive } from "@/types";
+import { Channel, Message, isExecutive, isPresidency } from "@/types";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +38,7 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
       .eq("id", user.id)
       .single();
 
-    if (!profile || !isExecutive(profile.role)) {
+    if (!profile || !isPresidency(profile.role)) {
       redirect("/channels/general-chat");
     }
   }

@@ -13,6 +13,8 @@ export type AttendanceStatus = 'present' | 'absent' | 'late';
 
 export type DocumentType = 'playbook' | 'pv' | 'template' | 'asset';
 
+export type ResourceCategory = 'posters' | 'assets' | 'letters' | 'forms';
+
 export interface Profile {
   id: string;
   email: string;
@@ -39,8 +41,39 @@ export interface Channel {
   name: string;
   description?: string | null;
   type: ChannelType;
+  passcode?: string | null;
   created_by?: string | null;
   created_at: string;
+}
+
+export interface PollOption {
+  id: string;
+  poll_id: string;
+  text: string;
+  order: number;
+  votes_count?: number;
+}
+
+export interface PollVote {
+  id: string;
+  poll_id: string;
+  option_id: string;
+  user_id: string;
+  created_at: string;
+}
+
+export interface Poll {
+  id: string;
+  channel_id: string;
+  creator_id: string;
+  question: string;
+  is_closed: boolean;
+  created_at: string;
+  creator?: Profile;
+  options?: PollOption[];
+  votes?: PollVote[];
+  user_voted_option_id?: string | null;
+  total_votes?: number;
 }
 
 export interface Message {
@@ -49,7 +82,13 @@ export interface Message {
   sender_id: string;
   content: string;
   created_at: string;
+  parent_id?: string | null;
+  is_pinned?: boolean;
+  pinned_by?: string | null;
+  pinned_at?: string | null;
   sender?: Profile;
+  replies_count?: number;
+  poll?: Poll | null;
 }
 
 export interface DM {
@@ -126,6 +165,63 @@ export interface DocumentItem {
   uploader?: Profile;
 }
 
+export interface ResourceItem {
+  id: string;
+  title: string;
+  category: ResourceCategory;
+  file_name: string;
+  file_size: number;
+  file_type?: string | null;
+  storage_path: string;
+  uploaded_by?: string | null;
+  created_at: string;
+  uploader?: Profile;
+}
+
+export interface MeetingPV {
+  id: string;
+  meeting_id?: string | null;
+  title: string;
+  date: string;
+  content: string;
+  attendees?: string | null;
+  decisions?: string | null;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+  author?: Profile;
+}
+
+export interface TemplateItem {
+  id: string;
+  title: string;
+  description?: string | null;
+  category: string;
+  file_name: string;
+  content?: string | null;
+  storage_path?: string | null;
+  created_by?: string | null;
+  created_at: string;
+  author?: Profile;
+}
+
+export interface MemberPerformance {
+  id: string;
+  full_name: string;
+  email: string;
+  role: UserRole;
+  avatar_url?: string | null;
+  attendance_rate: number;
+  present_count: number;
+  late_count: number;
+  absent_count: number;
+  total_meetings: number;
+  completed_tasks: number;
+  total_tasks: number;
+  messages_sent: number;
+  score: number;
+}
+
 export interface AuditLog {
   id: string;
   actor_id?: string | null;
@@ -141,4 +237,9 @@ export const EXECUTIVE_ROLES: UserRole[] = ['president', 'vice_president', 'exec
 export function isExecutive(role?: UserRole | null): boolean {
   if (!role) return false;
   return EXECUTIVE_ROLES.includes(role);
+}
+
+export function isPresidency(role?: UserRole | null): boolean {
+  if (!role) return false;
+  return role === 'president' || role === 'vice_president';
 }
