@@ -50,6 +50,10 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/kanban") ||
     pathname.startsWith("/attendance") ||
     pathname.startsWith("/playbook") ||
+    pathname.startsWith("/drive") ||
+    pathname.startsWith("/pvs") ||
+    pathname.startsWith("/templates") ||
+    pathname.startsWith("/analytics") ||
     pathname.startsWith("/admin");
 
   // Redirect unauthenticated users to login
